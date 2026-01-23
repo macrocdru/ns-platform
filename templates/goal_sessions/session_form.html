@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Редактирование сессии{% else %}Создание сессии{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if object %}Редактирование сессии{% else %}Создание сессии{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="id_session_type" class="form-label">Тип сессии:</label>
+        <select name="session_type" class="form-select" id="id_session_type" required>
+            <option value="">Выберите тип сессии</option>
+            {% for session_type in session_types %}
+            <option value="{{ session_type.id }}" {% if form.session_type.value == session_type.id %}selected{% endif %}>
+                {{ session_type.type_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_session_status" class="form-label">Статус сессии:</label>
+        <select name="session_status" class="form-select" id="id_session_status" required>
+            <option value="">Выберите статус сессии</option>
+            {% for session_status in session_statuses %}
+            <option value="{{ session_status.id }}" {% if form.session_status.value == session_status.id %}selected{% endif %}>
+                {{ session_status.type_name }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_start_date" class="form-label">Дата начала:</label>
+        <input type="date" name="start_date" class="form-control" id="id_start_date" 
+               value="{{ form.start_date.value|default:'' }}" required>
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_stop_date" class="form-label">Дата окончания:</label>
+        <input type="date" name="stop_date" class="form-control" id="id_stop_date" 
+               value="{{ form.stop_date.value|default:'' }}" required>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Сохранить изменения{% else %}Создать сессию{% endif %}
+    </button>
+    <a href="{% url 'session_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block title %}Мои цели{% endblock %}
+
+{% block content %}
+<h2>Мои цели</h2>
+<a href="{% url 'goal_create' %}" class="btn btn-primary mb-3">Добавить новую цель</a>
+
+{% if goals %}
+<div class="list-group">
+    {% for goal in goals %}
+    <div class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">{{ goal.goal_name }}</h5>
+            <small class="text-muted">Вес: {{ goal.priority_weight }}</small>
+        </div>
+        <p class="mb-1">{{ goal.goal_reason }}</p>
+        <small>
+            Тип: {{ goal.goal_type.type_name }} | 
+            Видимость: {% if goal.visibleforothers %}Да{% else %}Нет{% endif %} |
+            <a href="{% url 'goal_detail' goal.pk %}">Подробнее</a>
+        </small>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    У вас пока нет целей. <a href="{% url 'goal_create' %}">Создайте первую цель</a>.
+</div>
+{% endif %}
+{% endblock %}

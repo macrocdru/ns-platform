@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}{% if object %}Редактирование цели{% else %}Создание цели{% endif %}{% endblock %}
+
+{% block content %}
+<h2>{% if object %}Редактирование цели{% else %}Создание цели{% endif %}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <div class="mb-3">
+        <label for="id_goal_name" class="form-label">Название цели:</label>
+        <input type="text" name="goal_name" class="form-control" id="id_goal_name" 
+               value="{{ form.goal_name.value|default:'' }}" maxlength="30" required>
+        {% if form.goal_name.errors %}
+        <div class="text-danger">{{ form.goal_name.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_goal_reason" class="form-label">Причина цели:</label>
+        <textarea name="goal_reason" class="form-control" id="id_goal_reason" 
+                  rows="3" maxlength="250" required>{{ form.goal_reason.value|default:'' }}</textarea>
+        {% if form.goal_reason.errors %}
+        <div class="text-danger">{{ form.goal_reason.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_goal_type" class="form-label">Тип цели:</label>
+        <select name="goal_type" class="form-select" id="id_goal_type" required>
+            <option value="">Выберите тип цели</option>
+            {% for goal_type in goal_types %}
+            <option value="{{ goal_type.id }}" {% if form.goal_type.value == goal_type.id %}selected{% endif %}>
+                {{ goal_type.type_name }}
+            </option>
+            {% endfor %}
+        </select>
+        {% if form.goal_type.errors %}
+        <div class="text-danger">{{ form.goal_type.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_goal_result_type" class="form-label">Тип результата:</label>
+        <select name="goal_result_type" class="form-select" id="id_goal_result_type" required>
+            <option value="">Выберите тип результата</option>
+            {% for result_type in result_types %}
+            <option value="{{ result_type.id }}" {% if form.goal_result_type.value == result_type.id %}selected{% endif %}>
+                {{ result_type.type_name }}
+            </option>
+            {% endfor %}
+        </select>
+        {% if form.goal_result_type.errors %}
+        <div class="text-danger">{{ form.goal_result_type.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3">
+        <label for="id_priority_weight" class="form-label">Вес приоритета:</label>
+        <input type="number" name="priority_weight" class="form-control" id="id_priority_weight" 
+               value="{{ form.priority_weight.value|default:'1' }}" min="1" required>
+        {% if form.priority_weight.errors %}
+        <div class="text-danger">{{ form.priority_weight.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="mb-3 form-check">
+        <input type="checkbox" name="visibleforothers" class="form-check-input" id="id_visibleforothers"
+               {% if form.visibleforothers.value %}checked{% endif %}>
+        <label class="form-check-label" for="id_visibleforothers">Видимость для других</label>
+    </div>
+    
+    <button type="submit" class="btn btn-primary">
+        {% if object %}Сохранить изменения{% else %}Создать цель{% endif %}
+    </button>
+    <a href="{% url 'goal_list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}

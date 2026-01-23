@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<h1>Добро пожаловать в NS Platform!</h1>
+<p>Платформа для определения и достижения целей.</p>
+{% if not user.is_authenticated %}
+    <p><a href="{% url 'register' %}" class="btn btn-primary">Зарегистрироваться</a> или <a href="{% url 'login' %}" class="btn btn-secondary">Войти</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Сессии{% endblock %}
+
+{% block content %}
+<h2>Сессии целеполагания</h2>
+<a href="{% url 'session_create' %}" class="btn btn-primary mb-3">Создать новую сессию</a>
+
+{% if sessions %}
+<div class="list-group">
+    {% for session in sessions %}
+    <div class="list-group-item">
+        <div class="d-flex w-100 justify-content-between">
+            <h5 class="mb-1">Сессия #{{ session.id }}</h5>
+            <small class="text-muted">{{ session.session_type.type_name }}</small>
+        </div>
+        <p class="mb-1">
+            <strong>Статус:</strong> {{ session.session_status.type_name }}<br>
+            <strong>Даты:</strong> {{ session.start_date|date:"d.m.Y" }} - {{ session.stop_date|date:"d.m.Y" }}
+        </p>
+        <small>
+            <a href="{% url 'session_detail' session.pk %}">Подробнее</a>
+        </small>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    У вас пока нет сессий. <a href="{% url 'session_create' %}">Создайте первую сессию</a>.
+</div>
+{% endif %}
+{% endblock %}

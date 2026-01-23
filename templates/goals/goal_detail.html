@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}Цель: {{ goal.goal_name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h2>{{ goal.goal_name }}</h2>
+    </div>
+    <div class="card-body">
+        <table class="table">
+            <tr>
+                <th>Тип цели:</th>
+                <td>{{ goal.goal_type.type_name }}</td>
+            </tr>
+            <tr>
+                <th>Тип результата:</th>
+                <td>{{ goal.goal_result_type.type_name }}</td>
+            </tr>
+            <tr>
+                <th>Причина цели:</th>
+                <td>{{ goal.goal_reason }}</td>
+            </tr>
+            <tr>
+                <th>Вес приоритета:</th>
+                <td>{{ goal.priority_weight }}</td>
+            </tr>
+            <tr>
+                <th>Видимость для других:</th>
+                <td>{% if goal.visibleforothers %}Да{% else %}Нет{% endif %}</td>
+            </tr>
+            <tr>
+                <th>Дата создания:</th>
+                <td>{{ goal.createdat|date:"d.m.Y H:i" }}</td>
+            </tr>
+            <tr>
+                <th>Последнее изменение:</th>
+                <td>{{ goal.modifiedat|date:"d.m.Y H:i" }}</td>
+            </tr>
+        </table>
+        
+        <div class="mt-3">
+            <a href="{% url 'goal_list' %}" class="btn btn-secondary">Назад к списку</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
