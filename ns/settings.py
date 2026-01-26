@@ -70,6 +70,18 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
+# Настройки для Яндекс
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.yandex.ru'
+EMAIL_PORT = 465  # Или 587 для TLS
+EMAIL_USE_SSL = True  # Для порта 465
+EMAIL_USE_TLS = False  # Для порта 465, для 587 нужно True
+EMAIL_HOST_USER = 'ns-platform@yandex.ru'
+EMAIL_HOST_PASSWORD = 'mydqiurgbzaeopba'
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+SERVER_EMAIL = EMAIL_HOST_USER
+EMAIL_SUBJECT_PREFIX = '[NS Platform] '
+
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Europe/Moscow'
 USE_I18N = True
