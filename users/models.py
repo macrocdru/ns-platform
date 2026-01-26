@@ -1,7 +1,12 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
+import uuid
+from datetime import timedelta
+
 
 
 class NSUserManager(BaseUserManager):
@@ -101,6 +106,42 @@ class NSUser(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.userlogin
 
+class UserProfile(NSUser):
+    user = models.OneToOneField(NSUser, on_delete=models.CASCADE, related_name='profile')
+    email_verified = models.BooleanField(default=False)
+    verification_token = models.CharField(max_length=100, blank=True, null=True)
+    token_created_at = models.DateTimeField(null=True, blank=True)
+    verification_sent_at = models.DateTimeField(null=True, blank=True)
+
+    def generate_verification_token(self):
+        """Генерация нового токена верификации"""
+        self.verification_token = uuid.uuid4().hex
+        self.token_created_at = timezone.now()
+        self.save()
+        return self.verification_token
+
+    def is_token_valid(self):
+        """Проверка валидности токена (24 часа)"""
+        if not self.token_created_at or not self.verification_token:
+            return False
+        return timezone.now() < self.token_created_at + timedelta(hours=24)
+
+    def __str__(self):
+        return f"{self.user.username} - {'Verified' if self.email_verified else 'Not Verified'}"
+
+
+@receiver(post_save, sender=NSUser)
+def create_user_profile(sender, instance, created, **kwargs):
+    """Создание профиля при создании пользователя"""
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=NSUser)
+def save_user_profile(sender, instance, **kwargs):
+    """Сохранение профиля при сохранении пользователя"""
+    if hasattr(instance, 'profile'):
+        instance.profile.save()
 
 class NSRole(models.Model):
     """Модель ролей системы (таблица nsroles)"""

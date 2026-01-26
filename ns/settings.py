@@ -30,6 +30,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'users.middleware.EmailVerificationMiddleware',
 ]
 
 ROOT_URLCONF = 'ns.urls'
@@ -63,12 +64,15 @@ DATABASES = {
     }
 }
 
-AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
-]
+if DEBUG:
+    AUTH_PASSWORD_VALIDATORS = []
+else:
+    AUTH_PASSWORD_VALIDATORS = [
+        {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+        {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+        {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+        {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    ]
 
 # Настройки для Яндекс
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -77,7 +81,7 @@ EMAIL_PORT = 465  # Или 587 для TLS
 EMAIL_USE_SSL = True  # Для порта 465
 EMAIL_USE_TLS = False  # Для порта 465, для 587 нужно True
 EMAIL_HOST_USER = 'ns-platform@yandex.ru'
-EMAIL_HOST_PASSWORD = 'mydqiurgbzaeopba'
+EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_SUBJECT_PREFIX = '[NS Platform] '
@@ -101,4 +105,3 @@ AUTH_USER_MODEL = 'users.NSUser'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
-

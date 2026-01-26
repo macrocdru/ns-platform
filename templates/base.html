@@ -28,6 +28,14 @@
                                     {% csrf_token %}
                                 </form>
                         </li>
+                    {% if user.profile and not user.profile.email_verified %}
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" href="{% url 'users:resend_verification' %}">
+                            Подтвердить email
+                            </a>
+                        </li>
+                    {% endif %}
+
                     {% else %}
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'login' %}">Войти</a>
@@ -40,7 +48,7 @@
             </div>
         </div>
     </nav>
-    
+
     <div class="container mt-4">
         {% block content %}{% endblock %}
     </div>
