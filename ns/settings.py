@@ -1,4 +1,5 @@
 import os
+from decouple import config, Csv
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -17,6 +18,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'crispy_forms',
+    'crispy_bootstrap5',
     'users',
     'goals',
     'goal_sessions',
@@ -58,7 +61,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': os.getenv('DB_NAME', 'ns_db'),
         'USER': os.getenv('DB_USER', 'ns_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'nsuserpasswd'),
+        'PASSWORD': os.getenv('DB_PASSWORD', ''),
         'HOST': os.getenv('DB_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT', '5432'),
     }
@@ -76,15 +79,15 @@ else:
 
 # Настройки для Яндекс
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.yandex.ru'
-EMAIL_PORT = 465  # Или 587 для TLS
-EMAIL_USE_SSL = True  # Для порта 465
-EMAIL_USE_TLS = False  # Для порта 465, для 587 нужно True
-EMAIL_HOST_USER = 'ns-platform@yandex.ru'
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
-SERVER_EMAIL = EMAIL_HOST_USER
-EMAIL_SUBJECT_PREFIX = '[NS Platform] '
+EMAIL_HOST = config('EMAIL_HOST', default='smtp.yandex.ru')
+EMAIL_PORT = config('EMAIL_PORT', default=465, cast=int)
+EMAIL_USE_SSL = config('EMAIL_USE_SSL',default=True,cast=bool)
+EMAIL_USE_TLS = config('EMAIL_USE_TLS', default=False, cast=bool)
+EMAIL_HOST_USER = config('EMAIL_HOST_USER', default='')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD', default='')
+DEFAULT_FROM_EMAIL = config('EMAIL_FROM', default=EMAIL_HOST_USER)
+DEFAULT_SERVER_EMAIL = config('SERVER_EMAIL',default=EMAIL_HOST_USER)
+EMAIL_SUBJECT_PREFIX = config('EMAIL_SUBJECT_PREFIX',default='[NS Platform] ')
 
 LANGUAGE_CODE = 'ru-ru'
 TIME_ZONE = 'Europe/Moscow'
@@ -105,3 +108,15 @@ AUTH_USER_MODEL = 'users.NSUser'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
 LOGIN_URL = 'login'
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+CRISPY_CLASS_CONVERTERS = {
+    'textinput': 'form-control',
+    'passwordinput': 'form-control',
+    'emailinput': 'form-control',
+    'numberinput': 'form-control',
+    'urlinput': 'form-control',
+    'select': 'form-select',
+}

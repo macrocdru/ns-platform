@@ -1,36 +1,110 @@
 from django import forms
 from django.contrib .auth.forms import UserCreationForm,AuthenticationForm
 from django.core.exceptions import ValidationError
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Field, Submit
+
 from .models import NSUser
 
-class UserRegistrationForm(UserCreationForm):
-    email = forms.EmailField(required=True, label='Email')
-    
+class UserRegistrationForm(forms.ModelForm):
+    password1 = forms.CharField(
+        label="Пароль",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Введите пароль',
+            'autocomplete': 'new-password'
+        }),
+        help_text="Введите надежный пароль"
+
+    )
+
+    password2 = forms.CharField(
+        label="Подтверждение пароля",
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Повторите пароль',
+            'autocomplete': 'new-password'
+        }),
+        help_text="Для подтверждения введите пароль ещё раз"
+    )
+
     class Meta:
         model = NSUser
-        fields = ['userlogin', 'useremail', 'password1', 'password2']
-    
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if NSUser.objects.filter(email=email).exists():
-            raise ValidationError('Пользователь с таким email уже существует.')
-        return email
+        fields = ('userlogin', 'useremail', 'userphone')
+        widgets = {
+            'userlogin': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Придумайте логин',
+                'autocomplete': 'off'
+            }),
+            'useremail': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'example@email.com',
+                'autocomplete': 'off'
+            }),
+            'userphone': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': '+7 (XXX) XXX-XX-XX',
+                'autocomplete': 'off'
+            }),
+        }
+        labels = {
+            'userlogin': 'Логин',
+            'useremail': 'Электронная почта',
+            'userphone': 'Телефон (необязательно)',
+        }
+        help_texts = {
+            'userlogin': 'Уникальный логин пользователя (макс. 30 символов)',
+            'useremail': 'Уникальный email пользователя',
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Настройка crispy-forms
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            Field('userlogin', css_class='form-control-lg'),
+            Field('useremail', css_class='form-control-lg'),
+            Field('userphone', css_class='form-control-lg'),
+            Field('password1', css_class='form-control-lg'),
+            Field('password2', css_class='form-control-lg'),
+            Submit('submit', 'Зарегистрироваться', css_class='btn btn-primary btn-lg w-100 mt-3')
+        )
+
+    def clean_password2(self):
+        # Проверка совпадения паролей
+        password1 = self.cleaned_data.get("password1")
+        password2 = self.cleaned_data.get("password2")
+        if password1 and password2 and password1 != password2:
+            raise ValidationError("Пароли не совпадают")
+        return password2
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.useremail = self.cleaned_data['useremail']
+        user.set_password(self.cleaned_data["password1"])
         if commit:
             user.save()
         return user
 
-
 class LoginForm(AuthenticationForm):
-    userlogin = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'class': 'form-control'})
-    )
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+          Field('username',
+                  placeholder="Введите логин",
+                  css_class="form-control-lg",
+                  label="Логин"),
+            Field('password',
+                  placeholder="Введите пароль",
+                  css_class="form-control-lg",
+                  label="Пароль"),
+            Submit('submit', 'Войти',
+                   css_class='btn btn-primary btn-lg w-100 mt-3')
+        )
 
     def clean(self):
         userlogin = self.cleaned_data.get('userlogin')
