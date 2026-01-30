@@ -17,7 +17,7 @@ def send_verification_email(user, request):
 
     subject = 'Подтверждение email на платформе NS Platform'
     message = f'''
-    Здравствуйте, {user.username}!
+    Здравствуйте, {user.username}! 
 
     Для завершения регистрации и подтверждения вашего email адреса, 
     пожалуйста, перейдите по следующей ссылке:
@@ -37,7 +37,7 @@ def send_verification_email(user, request):
         subject,
         message,
         settings.DEFAULT_FROM_EMAIL,
-        [user.email],
+        [user.useremail],
         fail_silently=False,
     )
 

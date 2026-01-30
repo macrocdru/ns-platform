@@ -106,8 +106,13 @@ class NSUser(AbstractBaseUser, PermissionsMixin):
     def get_short_name(self):
         return self.userlogin
 
-class UserProfile(NSUser):
-    user = models.OneToOneField(NSUser, on_delete=models.CASCADE, related_name='profile')
+class UserProfile(models.Model):
+    id = models.AutoField(primary_key=True, verbose_name=_('ID'))
+    user = models.ForeignKey(
+        NSUser,
+        on_delete=models.CASCADE,
+        db_column='user_id',
+        related_name='profile')
     email_verified = models.BooleanField(default=False)
     verification_token = models.CharField(max_length=100, blank=True, null=True)
     token_created_at = models.DateTimeField(null=True, blank=True)

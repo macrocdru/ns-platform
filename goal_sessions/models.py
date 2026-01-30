@@ -112,7 +112,6 @@ class NSSession(models.Model):
             return (self.stop_date - self.start_date).days
         return 0
 
-
 class SessionGoal(models.Model):
     """Модель целей в сессии (таблица session_goals)"""
     id = models.AutoField(primary_key=True, verbose_name=_('ID'))

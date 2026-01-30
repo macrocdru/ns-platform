@@ -67,7 +67,7 @@ def verify_email(request, token):
             request,
             'Email успешно подтвержден! Теперь вы можете войти в систему.'
         )
-        return redirect('users:login')
+        return redirect('users:log  in')
 
     except UserProfile.DoesNotExist:
         messages.error(request, 'Неверная или устаревшая ссылка подтверждения.')

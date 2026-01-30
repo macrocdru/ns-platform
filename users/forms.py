@@ -61,7 +61,6 @@ class UserRegistrationForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # Настройка crispy-forms
         self.helper = FormHelper()
         self.helper.form_method = 'post'
         self.helper.layout = Layout(
@@ -74,7 +73,6 @@ class UserRegistrationForm(forms.ModelForm):
         )
 
     def clean_password2(self):
-        # Проверка совпадения паролей
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
         if password1 and password2 and password1 != password2:
